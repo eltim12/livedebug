@@ -1,31 +1,31 @@
 <template>
   <div id="app">
     <navigation :counter="this.favorites.length"/>
-    <router-view :myFavorite="myFavorite" @favorites="favorites"/>
+    <router-view :myFavorite="favorites" @myFavorite="myFavorite"/>
   </div>
 </template>
 
 <script>
-import '@/assets/style.css'
-import Navigation from '@/components/Navigation'
+import "@/assets/style.css";
+import Navigation from "@/components/Navigation";
 
 export default {
-  data () {
+  data() {
     return {
       favorites: []
-    }
+    };
   },
 
   components: {
     Navigation
   },
 
-  method: {
-    myFavorite (data) {
-      this.favorites = this.favorites.concat(data)
+  methods: {
+    myFavorite(data) {
+      this.favorites = this.favorites.concat(data);
     }
   }
-}
+};
 </script>
 
 <style>

@@ -21,21 +21,21 @@
       </div>
     </div>
 
-    <routing-view @myFavorite="myFavorite"/>
+    <router-view @myFavorite="myFavorite"/>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import User from '@/components/User.vue'
+import User from "@/components/User.vue";
 
 export default {
-  name: 'home',
+  name: "home",
 
-  data () {
+  data() {
     return {
       isLoading: true
-    }
+    };
   },
 
   components: {
@@ -43,29 +43,28 @@ export default {
   },
 
   methods: {
-    fetchUser () {
-      this.$store.dispatch('fetchUsers')
+    fetchUser() {
+      this.$store.dispatch("fetchUsers");
     },
 
-    seeProject (id) {
-      this.$router.push(`/${id}`)
+    seeProject(id) {
+      this.$router.push(`/${id}`);
     },
 
-    myFavorite (data) {
-      this.$emit('myFavorite', data)
+    myFavorite(data) {
+      
+      this.$emit("myFavorite", data);
     }
   },
 
   computed: {
-    users () {
-      return this.$store.state.users
+    users() {
+      return this.$store.state.users;
     }
   },
 
-  mounted () {
-    this.fetchUser().then(data => {
-      this.isLoading = false
-    })
+  mounted() {
+    this.fetchUser()
   }
-}
+};
 </script>

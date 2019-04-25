@@ -6,8 +6,8 @@ const Account = require('./account');
 const transactionSchema = new Schema({
   amount: {
     type: Number,
-    min: [ 10000, 'Minimal amount 10000' ],
-    require: [ true, 'amount is required']
+    min: [10000, 'Minimal amount 10000'],
+    require: [true, 'amount is required']
   },
   from: {
     type: mongoose.Schema.Types.ObjectId,
@@ -16,41 +16,47 @@ const transactionSchema = new Schema({
   to: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Account',
-    require: [ true, 'Destination account must fill']
+    require: [true, 'Destination account must fill']
   }
 })
 
-transactionSchema.pre('save', function(next) {
+transactionSchema.pre('save', function (next) {
   Account.findOne({
     _id: this.from,
-    balance: { $lte: Number(this.amount)  }
+    balance: { $gte: this.amount }
   })
-  .then(updated => {
-    if (updated) {
-      updated.balance -= this.amount;
-      updated.save();
-    } else {
-      next({
-        message: 'Insufficient balance'
-      });
-    }
-  })
-  .then(updated => {
-    return Account.findOne({
-      _id: this.to
-    })
-  })
-  .then(updated => {
-    updated.balance += this.amount;
-    updated.save();
+    .then(updated => {
+      if (updated) {
+        let result = 0
+        result = updated.balance -= this.amount
+        updated.balance = result
 
-    next();
-  })
-  .catch(err => {
-    next({
-      message: 'Transaction failed'
-    });
-  })
+        return updated.save();
+      } else {
+        next({
+          message: 'Insufficient balance'
+        });
+      }
+    })
+    .then(updated => {
+      return Account.findOne({
+        _id: this.to
+      })
+    })
+    .then(updated => {
+      updated.balance += this.amount;
+      return updated.save();
+
+    })
+    .then(updated => {
+      next();
+
+    })
+    .catch(err => {
+      next({
+        message: 'Transaction failed'
+      });
+    })
 })
 
 let Transaction = mongoose.model('Transaction', transactionSchema);
